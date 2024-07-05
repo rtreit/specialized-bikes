@@ -54,7 +54,5 @@ async def main():
         df = df.sort_values(by='price', ascending=False).reset_index(drop=True)
         return df
 
-# Run the main function using asyncio
 df = asyncio.run(main())
-# print df with tabulate
 print(tabulate.tabulate(df, headers='keys', tablefmt='psql'))
