@@ -42,4 +42,6 @@ def parse_product_data(json_data):
             id += 1
         else:
             print('No product data found')
+    if not data:
+        return None
     return pd.DataFrame(data).T
