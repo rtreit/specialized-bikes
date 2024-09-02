@@ -14,13 +14,14 @@ async def scrape_specialized(request):
             if json_data is not None:
                 df = parse_product_data(json_data)
                 dfs.append(df)
-        if dfs:
+        if len(dfs) > 0:
             df = pd.concat(dfs)
             df = df.sort_values(by='price', ascending=False).reset_index(drop=True)
             # bikes_data is a list of python dictionaries
             # dictionary keys are: 'name', 'size', 'class', 'type', 'subtype', 'price'
-
             bikes_data = df.to_dict(orient='records') 
+        else:
+            raise Exception("No data found in the pages")
 
     except Exception as e:
         print(f"Error: {str(e)}") # TODO: add logging in settings.py
