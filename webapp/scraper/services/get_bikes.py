@@ -19,7 +19,7 @@ async def fetch_all_pages():
     async with aiohttp.ClientSession() as session:
         for i in range(1, 15): # TODO: Use breadcrumbs to determine the number of pages
             tasks.append(fetch_page(session, i))
-            await asyncio.sleep(0.1) # sleep for 5 seconds between calls
+            await asyncio.sleep(0.1) # sleep for .1 seconds between calls
         return await asyncio.gather(*tasks)
 
 def extract_data_from_page(html_doc):
