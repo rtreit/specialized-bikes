@@ -74,3 +74,25 @@ Get current bike info from Specialized's site
 
 8. Go to locahost:8000 in the browser of your choice to confirm the web application has started.
 
+
+## Set up formatting for .html documents
+1. Install the Extension: Prettier - Code formatter
+2. Install prettier development dependencies: 
+```sh
+npm install --save-dev prettier prettier-plugin-django
+```
+3. Add the following the to projects `settings.json`:
+```json
+{
+  ...other settings,
+  "editor.formatOnSave": true,
+    "prettier.requireConfig": true,
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[django-html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}
+```
+
