@@ -16,8 +16,6 @@ async def scrape_specialized(request):
                 if df is not None:
                     dfs.append(df)
         if len(dfs) > 0:
-            print(f'found a total of {len(dfs)} dataframes')
-            print('dataframes:', dfs)
             df = pd.concat(dfs)
             df = df.sort_values(by='price', ascending=False).reset_index(drop=True)
             # bikes_data is a list of python dictionaries
@@ -31,3 +29,6 @@ async def scrape_specialized(request):
         raise ObjectDoesNotExist("Error fetching data from Specialized website")
 
     return render(request, 'scraper/scrape_specialized.html', context={'bikes': bikes_data})
+
+def home(request):
+    return render(request, 'scraper/home.html')
