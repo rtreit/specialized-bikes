@@ -3,8 +3,10 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get update \
+    && apt-get install -y dos2unix    
+  
 ENV PYTHONUNBUFFERED=1 \
     POSTGRES_USER=specialized \
     POSTGRES_DB=specialized_bikes \
@@ -18,7 +20,6 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-
 RUN rm -rf /var/lib/postgresql/15/main && \
     su postgres -c "/usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/15/main"
 
@@ -26,6 +27,8 @@ RUN echo "local   all             postgres                                trust"
     echo "local   all             all                                     trust" >> /etc/postgresql/15/main/pg_hba.conf
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# convert to UNIX format
+RUN dos2unix /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 5432 8000
