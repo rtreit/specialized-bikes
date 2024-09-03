@@ -1,0 +1,38 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{% static 'scraper.css' %}" />
+        <title>Specialized bikes</title>
+    </head>
+    <body>
+        <h2>Specialized bikes</h2>
+        <p>Total bikes found: {{ bikes|length }}</p>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Class</th>
+                <th>Bike/E-Bike</th>
+                <th>Type</th>
+                <th>Subtype</th>
+                <th>Price</th>
+            </tr>
+
+            {% for bike in bikes %}
+
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ bike.name }}</td>
+                <td>{{ bike.size }}</td>
+                <td>{{ bike.class }}</td>
+                <td>{{ bike.type }}</td>
+                <td>{{ bike.subtype }}</td>
+                <td>{{ bike.price }}$</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
