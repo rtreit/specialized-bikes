@@ -19,18 +19,23 @@
                 <th>Type</th>
                 <th>Subtype</th>
                 <th>Price</th>
+                <th>Url</th>
             </tr>
 
             {% for bike in bikes %}
-
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ bike.name }}</td>
                 <td>{{ bike.size }}</td>
-                <td>{{ bike.class }}</td>
+                <td>{{ bike.bike_class }}</td>
                 <td>{{ bike.type }}</td>
                 <td>{{ bike.subtype }}</td>
                 <td>{{ bike.price }}$</td>
+                <td>
+                    <a href="{{ bike.url }}" target="_blank" rel="noreferrer"
+                        >View in Specialized Store</a
+                    >
+                </td>
             </tr>
             {% endfor %}
         </table>

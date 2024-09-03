@@ -1,8 +1,19 @@
 import pandas as pd
 
-from django.core.exceptions import ObjectDoesNotExist # TODO: replace with custom exception
+from asgiref.sync import sync_to_async
+
+from django.core.exceptions import (
+    ObjectDoesNotExist,
+)  # TODO: replace with custom exception
 from django.shortcuts import render
-from .services.get_bikes import fetch_all_pages, extract_data_from_page, parse_product_data
+from django.utils import timezone
+from .services.get_bikes import (
+    fetch_all_pages,
+    extract_data_from_page,
+    parse_product_data,
+)
+from .models import SpecializedBike
+
 
 # Create your views here.
 async def scrape_specialized(request):
@@ -17,18 +28,44 @@ async def scrape_specialized(request):
                     dfs.append(df)
         if len(dfs) > 0:
             df = pd.concat(dfs)
-            df = df.sort_values(by='price', ascending=False).reset_index(drop=True)
+            df = df.sort_values(by="price", ascending=False).reset_index(drop=True)
             # bikes_data is a list of python dictionaries
             # dictionary keys are: 'name', 'size', 'class', 'type', 'subtype', 'price'
-            bikes_data = df.to_dict(orient='records') 
+            bikes_data = df.to_dict(orient="records")
+            for bike in bikes_data:
+                name = bike.get("name")
+                bike_already_exists = await sync_to_async(
+                    SpecializedBike.objects.filter(name=name).exists
+                )()
+                if not bike_already_exists:
+                    await sync_to_async(SpecializedBike.objects.create)(**bike)
+                else:
+                    saved_bike = await sync_to_async(
+                        SpecializedBike.objects.filter(name=name)
+                        .order_by("-created_at")
+                        .first
+                    )()
+                    current_time = timezone.now()
+                    bike_saved_time = saved_bike.created_at
+                    delta = current_time - bike_saved_time
+                    delta_in_hours = delta.total_seconds() / 3600
+                    print(
+                        f"{name} already exists in the database. Time since last scrape: {delta_in_hours} hours"
+                    )
+                    if delta_in_hours > 24:
+                        print("re-scraping for new data")
+                        await sync_to_async(SpecializedBike.objects.create)(**bike)
         else:
             raise Exception("No data found in the pages")
 
     except Exception as e:
-        print(f"Error: {str(e)}") # TODO: add logging in settings.py
+        print(f"Error: {str(e)}")  # TODO: add logging in settings.py
         raise ObjectDoesNotExist("Error fetching data from Specialized website")
 
-    return render(request, 'scraper/scrape_specialized.html', context={'bikes': bikes_data})
+    return render(
+        request, "scraper/scrape_specialized.html", context={"bikes": bikes_data}
+    )
+
 
 def home(request):
-    return render(request, 'scraper/home.html')
+    return render(request, "scraper/home.html")
