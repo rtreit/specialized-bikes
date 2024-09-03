@@ -1,3 +1,4 @@
+import os
 """
 Django settings for webapp project.
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure--6yz@)cbqv&7kov830@mtauki825)7^@j@#jvvzy)o-u=$4gd+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -76,13 +77,15 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'specialized_bikes',
-        'HOST': 'localhost',
-        'PORT': 5432,
-        'PASSWORD': 'specialized',
-        'USER': 'specialized',
+        'NAME': os.environ.get('POSTGRES_DB', 'specialized_bikes'),
+        'USER': os.environ.get('POSTGRES_USER', 'specialized'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
+
+
 
 
 # Password validation
