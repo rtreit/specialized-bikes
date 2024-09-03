@@ -74,3 +74,24 @@ Get current bike info from Specialized's site
 
 8. Go to locahost:8000 in the browser of your choice to confirm the web application has started.
 
+# Run from Docker
+This assumes you're running Docker in a Linux WSL2 terminal but should work for Windows as well. 
+
+1. Install Docker Desktop
+2. Build the container image
+    ```bash
+    docker build -t specialized:latest .
+    ```
+3. Run the container
+    ```bash
+    docker run -d -p 5432:5432 -p 8000:8000 --name specialized_bikes_web -e POSTGRES_PASSWORD=mysecurepassword -e POSTGRES_DB=specialized_bikes -e POSTGRES_USER=specialized specialized:latest
+    ```
+4. Check the logs to ensure all is well
+    ```bash
+    docker logs specialized_bikes_web
+    ```
+5. Browse to the site:
+    ```bash
+    http://localhost:8000
+    ```
+
