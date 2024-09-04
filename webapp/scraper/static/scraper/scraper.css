@@ -1,0 +1,149 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.content h1 {
+    font-size: 3em;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    z-index: 2;
+    padding: 2rem;
+    color: #fff;
+    font-style: italic;
+}
+.content h1::after {
+    content: 'Our bikes go faster if you pedal harder';
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 0.4em;
+    color: #ff0;
+    transform: translate(-50%, 1.5rem);
+    font-style: italic;
+}
+
+.content {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.content h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table,
+th,
+td {
+    border: 1px solid #ddd;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+    th {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr {
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+    td {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+    td:before {
+        position: absolute;
+        top: 50%;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        transform: translateY(-50%);
+        font-weight: bold;
+    }
+    td:nth-of-type(1):before {
+        content: '#';
+    }
+    td:nth-of-type(2):before {
+        content: 'Name';
+    }
+    td:nth-of-type(3):before {
+        content: 'Size';
+    }
+    td:nth-of-type(4):before {
+        content: 'Class';
+    }
+    td:nth-of-type(5):before {
+        content: 'Type';
+    }
+    td:nth-of-type(6):before {
+        content: 'Subtype';
+    }
+    td:nth-of-type(7):before {
+        content: 'Price';
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .header {
+        display: none;
+    }
+}
