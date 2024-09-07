@@ -74,6 +74,21 @@ Get current bike info from Specialized's site
 
 8. Go to locahost:8000 in the browser of your choice to confirm the web application has started.
 
+## Run RabbitMQ & Celery
+1. Start Docker and run 
+```sh
+docker run -d --name specialized_rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
+```
+
+2. Navigate to the web apps root directory (folder containing manage.py file) and run
+```py
+python -m celery -A webapp worker --loglevel=INFO --logfile=celery_worker.log
+python -m celery -A webapp beat --loglevel=INFO --logfile=celery_beat.log
+```
+
+2. Confirm RabbitMQ is running:
+Go to http://localhost:15672 and log in with guest / guest
+
 
 ## Set up formatting for .html documents
 1. Install the Extension: Prettier - Code formatter
@@ -106,7 +121,7 @@ This assumes you're running Docker in a Linux WSL2 terminal but should work for 
     ```
 3. Run the container
     ```bash
-    docker run -d -p 5432:5432 -p 8000:8000 --name specialized_bikes_web -e POSTGRES_PASSWORD=mysecurepassword -e POSTGRES_DB=specialized_bikes -e POSTGRES_USER=specialized specialized:latest
+    docker run -d -p 5432:5432 -p 8000:8000 -p 5672:5672 -p 15672:15672 --name specialized_bikes_web -e POSTGRES_PASSWORD=mysecurepassword -e POSTGRES_DB=specialized_bikes -e POSTGRES_USER=specialized specialized:latest
     ```
 4. Check the logs to ensure all is well
     ```bash
@@ -116,4 +131,3 @@ This assumes you're running Docker in a Linux WSL2 terminal but should work for 
     ```bash
     http://localhost:8000
     ```
-
