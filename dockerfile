@@ -47,6 +47,10 @@ RUN rm -rf /var/lib/postgresql/15/main && \
 RUN echo "local   all             postgres                                trust" > /etc/postgresql/15/main/pg_hba.conf && \
     echo "local   all             all                                     trust" >> /etc/postgresql/15/main/pg_hba.conf
 
+# Copy and set up the start script for services
+COPY start_services.sh /usr/local/bin/start_services.sh
+RUN dos2unix /usr/local/bin/start_services.sh && chmod +x /usr/local/bin/start_services.sh
+
 # Copy and set up the entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN dos2unix /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
@@ -63,7 +67,9 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 VOLUME /app/staticfiles
 
+WORKDIR /app/webapp
 # Replace the CMD to use Gunicorn as the production server
 # CMD ["python", "webapp/manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["gunicorn", "--chdir", "/app/webapp", "--bind", "0.0.0.0:8000", "webapp.wsgi:application"]
+# CMD ["gunicorn", "--chdir", "/app/webapp", "--bind", "0.0.0.0:8000", "webapp.wsgi:application"]
+CMD ["/usr/local/bin/start_services.sh"]
 
