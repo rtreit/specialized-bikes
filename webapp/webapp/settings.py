@@ -148,11 +148,11 @@ CELERY_TIMEZONE = 'America/Los_Angeles'
 CELERY_BEAT_SCHEDULE = {
     'scrape_specialized_bikes': {
        'task': 'scraper.tasks.scrape_specialized_bikes' ,
-       'schedule': schedule(run_every=10), # every hour
+       'schedule': schedule(run_every=10), # every 10 seconds
     },
     'testing_celery': {
         'task': 'scraper.tasks.testing_celery',
-        'schedule': schedule(run_every=10)
+        'schedule': schedule(run_every=10) # every 10 seconds
     }
 }
 
