@@ -13,10 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y python3-dev \
     && apt-get install -y libpq-dev 
 
-  
-RUN if ! getent group rabbitmq > /dev/null 2>&1; then groupadd -g 105 rabbitmq; fi \
-    && if ! id -u rabbitmq > /dev/null 2>&1; then useradd -u 105 -g 105 -M -s /sbin/nologin rabbitmq; fi
-
 RUN mkdir -p /var/run/rabbitmq && chown -R rabbitmq:rabbitmq /var/run/rabbitmq
 
 ENV PYTHONUNBUFFERED=1 \
@@ -24,7 +20,10 @@ ENV PYTHONUNBUFFERED=1 \
     POSTGRES_DB=specialized_bikes \
     POSTGRES_HOST=localhost \
     POSTGRES_PORT=5432 \
-    CELERY_BROKER_URL=amqp://specialized_celery_user:specialized!123@localhost:5672/myvhost
+    CELERY_BROKER_URL=amqp://specialized_celery_user:specialized!123@localhost:5672/myvhost \
+    DJANGO_SUPERUSER_USERNAME=admin \
+    DJANGO_SUPERUSER_PASSWORD=admin \
+    DJANGO_SUPERUSER_EMAIL=admin@example.com
 
 
 # Set the working directory
@@ -57,10 +56,10 @@ RUN dos2unix /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.
 
 # postgres
 EXPOSE 5432 
-# django
-EXPOSE 8000
 # celery
 EXPOSE 5672 15672
+# django
+EXPOSE 8000
 
 USER root
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
