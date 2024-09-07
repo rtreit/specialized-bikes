@@ -23,8 +23,8 @@ ENV PYTHONUNBUFFERED=1 \
     CELERY_BROKER_URL=amqp://specialized_celery_user:specialized!123@localhost:5672/myvhost \
     DJANGO_SUPERUSER_USERNAME=admin \
     DJANGO_SUPERUSER_PASSWORD=admin \
-    DJANGO_SUPERUSER_EMAIL=admin@example.com
-
+    DJANGO_SUPERUSER_EMAIL=admin@example.com \
+    DEBUG=0
 
 # Set the working directory
 WORKDIR /app    
