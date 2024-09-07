@@ -1,6 +1,5 @@
 import os
 from celery import Celery
-from time import sleep
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")

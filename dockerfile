@@ -1,5 +1,7 @@
+# Base image
 FROM python:3.12-slim
 
+# Install PostgreSQL and other dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql \
     rabbitmq-server \
@@ -25,23 +27,33 @@ ENV PYTHONUNBUFFERED=1 \
     CELERY_BROKER_URL=amqp://specialized_celery_user:specialized!123@localhost:5672/myvhost
 
 
+# Set the working directory
 WORKDIR /app    
 
+# Install Python dependencies
 COPY requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
+# Copy the application code
 COPY . /app
 
+RUN python webapp/manage.py collectstatic --noinput
+
+# Initialize PostgreSQL database
 RUN rm -rf /var/lib/postgresql/15/main && \
     su postgres -c "/usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/15/main"
 
+# Configure PostgreSQL to use trust authentication
 RUN echo "local   all             postgres                                trust" > /etc/postgresql/15/main/pg_hba.conf && \
     echo "local   all             all                                     trust" >> /etc/postgresql/15/main/pg_hba.conf
 
+# Copy and set up the start script for services
+COPY start_services.sh /usr/local/bin/start_services.sh
+RUN dos2unix /usr/local/bin/start_services.sh && chmod +x /usr/local/bin/start_services.sh
+
+# Copy and set up the entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-# convert to UNIX format
-RUN dos2unix /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN dos2unix /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
 # postgres
 EXPOSE 5432 
@@ -53,4 +65,11 @@ EXPOSE 5672 15672
 USER root
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["python", "webapp/manage.py", "runserver", "0.0.0.0:8000"]
+VOLUME /app/staticfiles
+
+WORKDIR /app/webapp
+# Replace the CMD to use Gunicorn as the production server
+# CMD ["python", "webapp/manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["gunicorn", "--chdir", "/app/webapp", "--bind", "0.0.0.0:8000", "webapp.wsgi:application"]
+CMD ["/usr/local/bin/start_services.sh"]
+

@@ -23,6 +23,7 @@ echo "host    all             all             ::1/128                 md5" >> /e
 service postgresql restart
 
 # rabbit mq
+rabbitmq-plugins enable rabbitmq_management
 service rabbitmq-server start
 sleep 10
 rabbitmqctl add_user specialized_celery_user specialized!123
@@ -32,7 +33,7 @@ rabbitmqctl set_permissions -p myvhost specialized_celery_user '.*' '.*' '.*'
 service rabbitmq-server restart
 
 # django
-python webapp/manage.py makemigrations
-python webapp/manage.py migrate
+python manage.py makemigrations
+python manage.py migrate
 
 exec "$@"
