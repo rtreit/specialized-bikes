@@ -1,4 +1,3 @@
-import os
 """
 Django settings for webapp project.
 
@@ -13,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from celery.schedules import schedule
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
+    'django_celery_results',
+    'core',
     'scraper',
 ]
 
@@ -112,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
 
 USE_I18N = True
 
@@ -132,3 +135,88 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery settings
+CELERY_BROKER_URL = os.environ.setdefault("CELERY_BROKER_URL", "amqp://guest@localhost//")
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BEAT_SCHEDULER= "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Los_Angeles'
+
+CELERY_BEAT_SCHEDULE = {
+    'scrape_specialized_bikes': {
+       'task': 'scraper.tasks.scrape_specialized_bikes' ,
+       'schedule': schedule(run_every=10), # every hour
+    },
+    'testing_celery': {
+        'task': 'scraper.tasks.testing_celery',
+        'schedule': schedule(run_every=10)
+    }
+}
+
+
+
+# logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'celery': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'celery.log',
+            'formatter': 'verbose',
+        },
+        'scraper': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'scraper.log',
+            'formatter': 'verbose',
+        },
+        'rest_client': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'rest_client.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'celery': {
+            'handlers': ['console','celery'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'scraper': {
+            'handlers': ['console', 'scraper'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'rest_client': {
+            'handlers': ['console', 'rest_client'],
+            'level': 'DEBUG',
+            'propagate': True
+        }
+    },
+}
