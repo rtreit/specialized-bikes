@@ -8,11 +8,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get update \
-<<<<<<< HEAD
-    && apt-get install -y dos2unix    
-
-# Set environment variables
-=======
     && apt-get install -y dos2unix \
     && apt-get install -y gcc \
     && apt-get install -y python3-dev \
@@ -24,7 +19,6 @@ RUN if ! getent group rabbitmq > /dev/null 2>&1; then groupadd -g 105 rabbitmq; 
 
 RUN mkdir -p /var/run/rabbitmq && chown -R rabbitmq:rabbitmq /var/run/rabbitmq
 
->>>>>>> updates/andreas
 ENV PYTHONUNBUFFERED=1 \
     POSTGRES_USER=specialized \
     POSTGRES_DB=specialized_bikes \
