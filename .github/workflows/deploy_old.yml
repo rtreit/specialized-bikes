@@ -30,32 +30,24 @@ jobs:
 
       # Build the Docker image
       - name: Build Docker image
-        run: docker compose -f docker-compose.yml build
+        run: docker build -t paincave.azurecr.io/specialized:latest .
 
       # Push the Docker image to Azure Container Registry (ACR)
       - name: Push Docker image to ACR
-        run: docker compose -f docker-compose.yml push
+        run: docker push paincave.azurecr.io/specialized:latest
 
   deploy:
+    # The deploy job will only run after the build job completes successfully
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code from the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Set up kubectl
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
+      # Log in to Azure using the service principal credentials stored in GitHub Secrets
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          version: 'latest'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Set up kubeconfig
-      - name: Set up Kubeconfig
-        run: echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
-
-      # Deploy to AKS
-      - name: Deploy to AKS
-        run: |
-          kubectl apply -f k8s-deployment.yml
+      # Restart the Azure Web App to apply the new container
+      - name: Restart Web App
+        run: az webapp restart --name paincave-webapp --resource-group paincave

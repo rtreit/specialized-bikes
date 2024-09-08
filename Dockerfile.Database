@@ -1,0 +1,36 @@
+# Base image
+FROM postgres:15
+
+# Install dos2unix and clean up
+RUN apt-get update && apt-get install -y --no-install-recommends dos2unix && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the entrypoint script and convert line endings
+COPY database.entrypoint.sh .
+RUN dos2unix database.entrypoint.sh && chmod +x database.entrypoint.sh
+
+# Set environment variables
+ENV POSTGRES_USER=specialized \
+    POSTGRES_DB=specialized_bikes \
+    POSTGRES_PASSWORD=mysecurepassword
+
+COPY database.entrypoint.sh /docker-entrypoint-initdb.d/
+
+# # Initialize PostgreSQL database
+# RUN rm -rf /var/lib/postgresql/data && \
+#     su postgres -c "/usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/data"
+
+# # Configure PostgreSQL to trust local connections
+# RUN echo "local   all             postgres                                trust" > /var/lib/postgresql/data/pg_hba.conf && \
+#     echo "local   all             all                                     trust" >> /var/lib/postgresql/data/pg_hba.conf
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# Volume for PostgreSQL data
+VOLUME /var/lib/postgresql/data
+
+# Set the entrypoint
+ENTRYPOINT ["./database.entrypoint.sh"]

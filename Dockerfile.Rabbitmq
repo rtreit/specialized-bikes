@@ -1,0 +1,29 @@
+# Base image
+FROM rabbitmq:3-management
+
+# Install dos2unix and clean up
+RUN apt-get update && apt-get install -y --no-install-recommends dos2unix && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    POSTGRES_USER=specialized \
+    POSTGRES_DB=specialized_bikes \
+    POSTGRES_HOST=localhost \
+    POSTGRES_PORT=5432 \
+    CELERY_BROKER_URL=amqp://specialized_celery_user:specialized!123@localhost:5672/myvhost \
+    DJANGO_SUPERUSER_USERNAME=admin \
+    DJANGO_SUPERUSER_PASSWORD=admin \
+    DJANGO_SUPERUSER_EMAIL=admin@example.com
+
+# Set the working directory
+WORKDIR /app
+
+# Create necessary directories and set permissions
+RUN mkdir -p /var/run/rabbitmq && chown -R rabbitmq:rabbitmq /var/run/rabbitmq
+
+# Copy the entrypoint script to /usr/local/bin and convert line endings
+COPY rabbitmq.entrypoint.sh .
+RUN dos2unix /app/rabbitmq.entrypoint.sh && chmod +x /app/rabbitmq.entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["./rabbitmq.entrypoint.sh"]
