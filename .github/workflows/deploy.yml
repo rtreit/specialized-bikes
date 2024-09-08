@@ -36,6 +36,7 @@ jobs:
       - name: Push Docker image to ACR
         run: docker compose -f docker-compose.yml push
 
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -45,17 +46,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up kubectl
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
+      # Log in to Azure using service principal credentials stored in the AZURE_CREDENTIALS secret
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          version: 'latest'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Set up kubeconfig
-      - name: Set up Kubeconfig
-        run: echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
-
-      # Deploy to AKS
-      - name: Deploy to AKS
+      # Configure the web app to use the Docker images
+      - name: Configure Web App
         run: |
-          kubectl apply -f k8s-deployment.yml
+          az webapp config container set --name paincave-webapp --resource-group paincave --multicontainer-config-type compose --multicontainer-config-file docker-compose.yml
+
+      # Restart the Azure Web App to apply the new container
+      - name: Restart Web App
+        run: az webapp restart --name paincave-webapp --resource-group paincave
