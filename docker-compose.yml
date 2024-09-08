@@ -19,6 +19,7 @@ services:
       DJANGO_SUPERUSER_PASSWORD: admin
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       POSTGRES_PASSWORD: mysecurepassword
+      DEBUG: 0
     depends_on:
       - db
       - rabbitmq
