@@ -25,9 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure--6yz@)cbqv&7kov830@mtauki825)7^@j@#jvvzy)o-u=$4gd+"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(int(os.environ.get("DEBUG"), 0))
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "https://paincave.pro",
+    "https://www.paincave.pro",
+    "localhost",
+    "127.0.0.1",
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://paincave.pro",
@@ -52,6 +57,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "core",
     "scraper",
+    "homonymtracker",
 ]
 
 MIDDLEWARE = [
@@ -162,14 +168,14 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "America/Los_Angeles"
 
 CELERY_BEAT_SCHEDULE = {
-    "scrape_specialized_bikes": {
-        "task": "scraper.tasks.scrape_specialized_bikes",
-        "schedule": schedule(run_every=10),  # every hour
+    'scrape_specialized_bikes': {
+       'task': 'scraper.tasks.scrape_specialized_bikes' ,
+       'schedule': schedule(run_every=10), # every 10 seconds
     },
-    "testing_celery": {
-        "task": "scraper.tasks.testing_celery",
-        "schedule": schedule(run_every=10),
-    },
+    'testing_celery': {
+        'task': 'scraper.tasks.testing_celery',
+        'schedule': schedule(run_every=10) # every 10 seconds
+    }
 }
 
 
