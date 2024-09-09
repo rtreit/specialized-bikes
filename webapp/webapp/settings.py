@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure--6yz@)cbqv&7kov830@mtauki825)7^@j@#jvvzy)o-u=$4gd+"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get("DEBUG"), 0))
+DEBUG = bool(int(os.environ.get("DEBUG", "0") ))
 
 ALLOWED_HOSTS = [
     "https://paincave.pro",
