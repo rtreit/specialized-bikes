@@ -28,14 +28,13 @@ jobs:
       - name: Log in to ACR
         run: az acr login --name paincave
 
-      # Build the Docker image
-      - name: Build Docker image
+      # Build all Docker images
+      - name: Build Docker images
         run: docker compose -f docker-compose.yml build
 
-      # Push the Docker image to Azure Container Registry (ACR)
-      - name: Push Docker image to ACR
+      # Push all Docker images to ACR
+      - name: Push Docker images to ACR
         run: docker compose -f docker-compose.yml push
-
 
   deploy:
     needs: build
