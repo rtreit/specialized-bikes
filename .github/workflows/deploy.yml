@@ -10,23 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Docker for the build process
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      # Log in to Azure using service principal credentials stored in the AZURE_CREDENTIALS secret
       - name: Log in to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Log in to Azure Container Registry (ACR)
       - name: Log in to ACR
         run: az acr login --name paincave
 
+      # Build all Docker images
       - name: Build Docker images
         run: docker compose -f docker-compose.yml build
 
+      # Push all Docker images to ACR
       - name: Push Docker images to ACR
         run: docker compose -f docker-compose.yml push
 
@@ -35,17 +41,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Log in to Azure using service principal credentials stored in the AZURE_CREDENTIALS secret
       - name: Log in to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Configure the web app to use the Docker images
       - name: Configure Web App
         run: |
           az webapp config container set --name paincave-webapp --resource-group paincave --multicontainer-config-type compose --multicontainer-config-file docker-compose.yml
 
+      # Restart the Azure Web App to apply the new container
       - name: Restart Web App
         run: az webapp restart --name paincave-webapp --resource-group paincave
