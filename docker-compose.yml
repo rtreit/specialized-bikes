@@ -1,9 +1,11 @@
+version: '3.8'  # Specify version if needed
+
 services:
   webapp:
     build: 
       context: .
       dockerfile: Dockerfile.Webapp
-    image: specialized_webapp:latest
+    image: paincave.azurecr.io/specialized_webapp:latest  # Prefix with ACR
     ports:
       - "8000:8000"
     volumes:
@@ -27,7 +29,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.Database
-    image: specialized_database:latest
+    image: paincave.azurecr.io/specialized_database:latest  # Prefix with ACR
     environment:
       POSTGRES_USER: specialized
       POSTGRES_DB: specialized_bikes
@@ -42,7 +44,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.Rabbitmq
-    image: specialized_rabbit:latest
+    image: paincave.azurecr.io/specialized_rabbit:latest  # Prefix with ACR
     environment:
       RABBITMQ_DEFAULT_USER: specialized_celery_user
       RABBITMQ_DEFAULT_PASS: specialized!123
