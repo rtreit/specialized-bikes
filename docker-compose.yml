@@ -1,18 +1,19 @@
+version: '3.8'
+
 services:
   webapp:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.Webapp
-    image: specialized_webapp:latest
+    image: paincave.azurecr.io/specialized_webapp:latest
     ports:
       - "8000:8000"
     volumes:
       - staticfiles:/app/staticfiles
-      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: specialized
       POSTGRES_DB: specialized_bikes
-      POSTGRES_HOST: db
+      POSTGRES_HOST: db  
       POSTGRES_PORT: 5432
       CELERY_BROKER_URL: amqp://specialized_celery_user:specialized!123@rabbitmq:5672/myvhost
       DJANGO_SUPERUSER_USERNAME: admin
@@ -24,11 +25,11 @@ services:
       db:
         condition: service_healthy
 
-  db: 
-    build: 
+  db:
+    build:
       context: .
       dockerfile: Dockerfile.Database
-    image: specialized_database:latest
+    image: paincave.azurecr.io/specialized_database:latest
     environment:
       POSTGRES_USER: specialized
       POSTGRES_DB: specialized_bikes
@@ -43,12 +44,14 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   rabbitmq:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.Rabbitmq
-    image: specialized_rabbit:latest
+    image: paincave.azurecr.io/specialized_rabbit:latest
     environment:
       RABBITMQ_DEFAULT_USER: specialized_celery_user
       RABBITMQ_DEFAULT_PASS: specialized!123
