@@ -28,8 +28,8 @@ SECRET_KEY = "django-insecure--6yz@)cbqv&7kov830@mtauki825)7^@j@#jvvzy)o-u=$4gd+
 DEBUG = bool(int(os.environ.get("DEBUG", "0") ))
 
 ALLOWED_HOSTS = [
-    "https://paincave.pro",
-    "https://www.paincave.pro",
+    "paincave.pro",
+    ".paincave.pro",
     "localhost",
     "127.0.0.1",
 ]
