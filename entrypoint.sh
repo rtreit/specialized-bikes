@@ -7,12 +7,6 @@ if [ -z "$POSTGRES_PASSWORD" ]; then
   exit 1
 fi
 
-# Wait for PostgreSQL to be ready
-until pg_isready -h db -p 5432 -U "$POSTGRES_USER"; do
-  echo "Waiting for PostgreSQL to be ready..."
-  sleep 2
-done
-
 # Run Django migrations
 python manage.py makemigrations
 python manage.py migrate

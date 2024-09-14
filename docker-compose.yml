@@ -39,7 +39,7 @@ services:
       POSTGRES_HOST: localhost 
       POSTGRES_PORT: 5432 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h localhost -U specialized -d specialized_bikes"]
+      test: pg_isready -h localhost -U specialized -d specialized_bikes
       interval: 30s
       timeout: 10s
       retries: 5
@@ -59,7 +59,7 @@ services:
       RABBITMQ_DEFAULT_PASS: specialized!123
       RABBITMQ_DEFAULT_VHOST: myvhost
     healthcheck:
-      test: ["CMD-SHELL", "rabbitmqctl status"]
+      test: rabbitmqctl status
       interval: 30s
       timeout: 10s
       retries: 5
