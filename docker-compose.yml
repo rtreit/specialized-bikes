@@ -21,8 +21,8 @@ services:
       POSTGRES_PASSWORD: mysecurepassword
       DEBUG: 0
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy
 
   db: 
     build: 
@@ -35,6 +35,11 @@ services:
       POSTGRES_PASSWORD: mysecurepassword
       POSTGRES_HOST: localhost 
       POSTGRES_PORT: 5432 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U specialized -d specialized_bikes"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
